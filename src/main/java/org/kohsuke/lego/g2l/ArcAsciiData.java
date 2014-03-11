@@ -46,6 +46,14 @@ public class ArcAsciiData {
         min = mn;
     }
 
+    public int xx(float range) {
+        return (int)(xx*range);
+    }
+
+    public int yy(float range) {
+        return (int)(yy*range);
+    }
+
     public int at(int x, int y) {
         return data[x+y*xx];
     }
@@ -105,6 +113,6 @@ public class ArcAsciiData {
     }
 
     private static final Set<String> KEYWORDS = new HashSet<String>(Arrays.asList(
-            "ncols","nrows","xllcorner","yllcorner","cellsize","NODATA_value"
+            "ncols","nrows","xllcorner","yllcorner","cellsize","NODATA_value","dx","dy"
     ));
 }
