@@ -56,6 +56,7 @@ public class ArcAsciiData {
     public int scaleOf(int x, int y, int mn, int mx) {
         long v = at(x,y);
         long l = (v-min)*(mx-mn)/(max-min+1)+mn;
+        assert mn<=l && l<mx;
         return (int)l;
     }
 

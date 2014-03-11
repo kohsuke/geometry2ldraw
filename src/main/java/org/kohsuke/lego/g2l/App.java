@@ -11,14 +11,10 @@ public class App {
     public static void main(String[] args) throws Exception {
         ArcAsciiData data = ArcAsciiData.read(new FileReader(args[0]));
 
-        System.out.println("min="+data.min);
-        System.out.println("max="+data.max);
-
         BufferedImage img = new BufferedImage(data.xx, data.yy, TYPE_INT_RGB);
         for (int y=0; y<data.yy; y++) {
             for (int x=0; x<data.xx; x++) {
                 int v = data.scaleOf(x, y, 0, 256);
-                assert 0<=v && v<256;
                 img.setRGB(x,y, v);
             }
         }
