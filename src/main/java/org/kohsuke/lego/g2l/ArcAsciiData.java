@@ -15,13 +15,48 @@ import java.util.Set;
  * @author Kohsuke Kawaguchi
  */
 public class ArcAsciiData {
-    private final int cols, rows;
+    /**
+     * Dimension of the data.
+     */
+    public final int xx, yy;
     private final int[] data;
 
-    public ArcAsciiData(int cols, int rows, int[] data) {
-        this.cols = cols;
-        this.rows = rows;
+    /**
+     * Biggest value in the entire data
+     */
+    public final int max;
+    /**
+     * Smallest value in the entire data
+     */
+    public final int min;
+
+    public ArcAsciiData(int x, int y, int[] data) {
+        this.xx = x;
+        this.yy = y;
         this.data = data;
+
+        int mn=Integer.MAX_VALUE;
+        int mx=Integer.MIN_VALUE;
+
+        for (int i : data) {
+            mn = Math.min(mn,i);
+            mx = Math.max(mx,i);
+        }
+        max = mx;
+        min = mn;
+    }
+
+    public int at(int x, int y) {
+        return data[x+y*xx];
+    }
+
+    /**
+     * Scale the data at the given position between [mn,mx)
+     */
+    public int scaleOf(int x, int y, int mn, int mx) {
+        long v = at(x,y);
+        long l = (v-min)*(mx-mn)/(max-min+1)+mn;
+        return (int)l;
     }
 
     public static ArcAsciiData read(Reader r) throws IOException {
