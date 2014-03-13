@@ -54,10 +54,10 @@ public class App {
     float sx = 0f;
 
     @Option(name="-ex")
-    float ex = 0f;
+    float ex = 1f;
 
     @Option(name="-sy")
-    float sy = 1f;
+    float sy = 0f;
 
     @Option(name="-ey")
     float ey = 1f;
@@ -73,7 +73,6 @@ public class App {
      * Write data in the LDraw format
      */
     private void writeLDraw(File input, ArcAsciiData d) throws IOException {
-        int color = WHITE;
 
         // parameter for yosemite
         /*
@@ -99,7 +98,7 @@ public class App {
         float sy=0.3f, ey=0.7f;
         */
 
-        float cellsize_in_meters = (float)(2.0f * Math.PI * EARTH_RADIUS / d.cellsize);
+        float cellsize_in_meters = (float)(2.0f * Math.PI * EARTH_RADIUS * d.cellsize/360);
         float one_stud_in_meters = cellsize_in_meters*scale;
         float ldu_in_meters = one_stud_in_meters/20;
         float plate_in_meters = ldu_in_meters*8;
@@ -114,13 +113,14 @@ public class App {
             for (int y=d.yy(sy); y<d.yy(ey); y+=scale) {
                 for (int x=d.xx(sx); x<d.xx(ex); x+=scale) {
                     int h = (int)((d.averageAt(x,y)-d.min) / plate_in_meters);
-                    int c = first ? RED : color;
-                    first = false;
+                    int c = first ? RED : WHITE;
 
                     for (int z=0; z<3; z++) {
                         w.printf("1 %d  %d %d %d   1 0 0   0 1 0   0 0 1  3005.DAT\n",
                                 c, y*20/scale, -h*8+z*24, x*20/scale);
                     }
+
+                    first = false;
                 }
             }
         }
