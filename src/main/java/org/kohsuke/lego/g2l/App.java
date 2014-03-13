@@ -63,7 +63,7 @@ public class App {
     float ey = 1f;
 
     @Option(name="height")
-    float h = 128;
+    int heightRange = 128;
 
     @Option(name="scale")
     int scale = 10;
@@ -72,7 +72,7 @@ public class App {
     /**
      * Write data in the LDraw format
      */
-    private static void writeLDraw(File input, ArcAsciiData d) throws IOException {
+    private void writeLDraw(File input, ArcAsciiData d) throws IOException {
         int color = WHITE;
 
         // parameter for yosemite
@@ -92,13 +92,15 @@ public class App {
         */
 
         // parameter for matterhorn
+        /*
         int heightRange = 64;
         int scale = 6;
         float sx=0.3f, ex=0.85f;
         float sy=0.3f, ey=0.7f;
-
+        */
 
         System.out.printf("xx=%d,yy=%d\n", d.xx, d.yy);
+        System.out.printf("min=%d,max=%d\n",d.min, d.max);
 
         try (PrintWriter w = new PrintWriter(new FileWriter(input.getPath() +".ldr"))) {
             w.printf("0 %s\n", input);
@@ -120,7 +122,7 @@ public class App {
     /**
      * Build height map image.
      */
-    private static BufferedImage makeImage(ArcAsciiData data) {
+    private BufferedImage makeImage(ArcAsciiData data) {
         BufferedImage img = new BufferedImage(data.xx, data.yy, TYPE_INT_RGB);
         for (int y=0; y<data.yy; y++) {
             for (int x=0; x<data.xx; x++) {
