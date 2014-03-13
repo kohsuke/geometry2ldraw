@@ -39,10 +39,19 @@ public class App {
         */
 
         // parameter for small everest
+        /*
         int heightRange = 128;
         int scale = 4;
         float sx=0.10f, ex=0.6f;
         float sy=0.35f, ey=0.70f;
+        */
+
+        // parameter for matterhorn
+        int heightRange = 64;
+        int scale = 6;
+        float sx=0.3f, ex=0.85f;
+        float sy=0.3f, ey=0.7f;
+
 
         System.out.printf("xx=%d,yy=%d\n", d.xx, d.yy);
 
@@ -51,10 +60,13 @@ public class App {
 
             for (int y=d.yy(sy); y<d.yy(ey); y+=scale) {
                 for (int x=d.xx(sx); x<d.xx(ex); x+=scale) {
-                    int h = d.scaleOf(x, y, 0, heightRange);
+                    int h = d.scaleOf(d.averageAt(x,y), 0, heightRange);
                     int c = (x==0 && y==0) ? RED : color;
-                    w.printf("1 %d  %d %d %d   1 0 0   0 1 0   0 0 1  2453.DAT\n",
-                            c, y*20/scale, -h*8, x*20/scale);
+
+                    for (int z=0; z<3; z++) {
+                        w.printf("1 %d  %d %d %d   1 0 0   0 1 0   0 0 1  3005.DAT\n",
+                                c, y*20/scale, -h*8+z*24, x*20/scale);
+                    }
                 }
             }
         }
@@ -67,7 +79,7 @@ public class App {
         BufferedImage img = new BufferedImage(data.xx, data.yy, TYPE_INT_RGB);
         for (int y=0; y<data.yy; y++) {
             for (int x=0; x<data.xx; x++) {
-                int v = data.scaleOf(x, y, 0, 256);
+                int v = data.scaleOf(data.at(x,y), 0, 256);
                 img.setRGB(x,y, v);
             }
         }

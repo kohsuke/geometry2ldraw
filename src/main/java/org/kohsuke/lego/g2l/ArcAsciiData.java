@@ -58,12 +58,19 @@ public class ArcAsciiData {
         return data[x+y*xx];
     }
 
+    public int averageAt(int x, int y) {
+        if (x==0 || y==0 || x==xx-1 || y==yy-1)
+            return at(x,y);
+
+        return (at(x,y)+at(x-1,y)+at(x,y-1)+at(x+1,y)+at(x,y+1))/5;
+    }
+
     /**
      * Scale the data at the given position between [mn,mx)
      */
-    public int scaleOf(int x, int y, int mn, int mx) {
-        long v = at(x,y);
-        long l = (v-min)*(mx-mn)/(max-min+1)+mn;
+    public int scaleOf(int v, int mn, int mx) {
+        long lv = v;
+        long l = (lv-min)*(mx-mn)/(max-min+1)+mn;
         assert mn<=l && l<mx;
         return (int)l;
     }
