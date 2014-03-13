@@ -12,6 +12,8 @@ import static java.awt.image.BufferedImage.*;
 
 public class App {
 
+    // color code in LDraw data file
+    // see  // see http://www.ldraw.org/article/547
     private static final int RED = 4;
     private static final int WHITE = 15;
 
@@ -28,7 +30,7 @@ public class App {
      * Write data in the LDraw format
      */
     private static void writeLDraw(String input, ArcAsciiData d) throws IOException {
-        int color = WHITE; // see http://www.ldraw.org/article/547
+        int color = WHITE;
 
         // parameter for yosemite
         /*
