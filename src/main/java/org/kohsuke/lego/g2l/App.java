@@ -1,5 +1,9 @@
 package org.kohsuke.lego.g2l;
 
+import org.kohsuke.args4j.Argument;
+import org.kohsuke.args4j.CmdLineParser;
+import org.kohsuke.args4j.Option;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -7,6 +11,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import static java.awt.image.BufferedImage.*;
 
@@ -18,18 +24,49 @@ public class App {
     private static final int WHITE = 15;
 
     public static void main(String[] args) throws Exception {
-        ArcAsciiData data = ArcAsciiData.read(new FileReader(args[0]));
-
-        BufferedImage img = makeImage(data);
-        ImageIO.write(img, "PNG", new File(args[0] + ".png"));
-
-        writeLDraw(args[0], data);
+        App app = new App();
+        CmdLineParser p = new CmdLineParser(app);
+        p.parseArgument(args);
+        app.run();
     }
+
+    public void run() throws IOException {
+        for (File arg : args) {
+            ArcAsciiData data = ArcAsciiData.read(new FileReader(arg));
+
+            BufferedImage img = makeImage(data);
+            ImageIO.write(img, "PNG", new File(arg.getPath() + ".png"));
+
+            writeLDraw(arg, data);
+        }
+    }
+
+    @Argument
+    List<File> args = new ArrayList<>();
+
+    @Option(name="-sx")
+    float sx = 0f;
+
+    @Option(name="-ex")
+    float ex = 0f;
+
+    @Option(name="-sy")
+    float sy = 1f;
+
+    @Option(name="-ey")
+    float ey = 1f;
+
+    @Option(name="height")
+    float h = 128;
+
+    @Option(name="scale")
+    int scale = 10;
+
 
     /**
      * Write data in the LDraw format
      */
-    private static void writeLDraw(String input, ArcAsciiData d) throws IOException {
+    private static void writeLDraw(File input, ArcAsciiData d) throws IOException {
         int color = WHITE;
 
         // parameter for yosemite
@@ -57,7 +94,7 @@ public class App {
 
         System.out.printf("xx=%d,yy=%d\n", d.xx, d.yy);
 
-        try (PrintWriter w = new PrintWriter(new FileWriter(input +".ldr"))) {
+        try (PrintWriter w = new PrintWriter(new FileWriter(input.getPath() +".ldr"))) {
             w.printf("0 %s\n", input);
 
             for (int y=d.yy(sy); y<d.yy(ey); y+=scale) {
