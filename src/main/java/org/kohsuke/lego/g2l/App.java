@@ -1,6 +1,7 @@
 package org.kohsuke.lego.g2l;
 
 import org.kohsuke.args4j.Argument;
+import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
@@ -26,8 +27,13 @@ public class App {
     public static void main(String[] args) throws Exception {
         App app = new App();
         CmdLineParser p = new CmdLineParser(app);
-        p.parseArgument(args);
-        app.run();
+        try {
+            p.parseArgument(args);
+            app.run();
+        } catch (CmdLineException e) {
+            System.err.println(e.getMessage());
+            p.printUsage(System.err);
+        }
     }
 
     public void run() throws IOException {
@@ -41,7 +47,7 @@ public class App {
         }
     }
 
-    @Argument
+    @Argument(required=true,metaVar="ASC")
     List<File> args = new ArrayList<>();
 
     @Option(name="-sx")
