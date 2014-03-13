@@ -30,9 +30,17 @@ public class ArcAsciiData {
      */
     public final int min;
 
-    public ArcAsciiData(int x, int y, int[] data) {
+    /**
+     * Size of the each data point.
+     *
+     * (For ASTER data, the unit is degree)
+     */
+    public final float cellsize;
+
+    public ArcAsciiData(int x, int y, float cellsize, int[] data) {
         this.xx = x;
         this.yy = y;
+        this.cellsize=cellsize;
         this.data = data;
 
         int mn=Integer.MAX_VALUE;
@@ -80,7 +88,7 @@ public class ArcAsciiData {
             BufferedReader b = new BufferedReader(r);
 
             int cols=0,rows=0;  // dimension of the array when we read it
-
+            float cellsize=0;
             int[] data=null;    // actual data
             int ptr=0;
 
@@ -94,6 +102,7 @@ public class ArcAsciiData {
                     switch (tokens[0]) {
                     case "ncols":   cols=(int)n;break;
                     case "nrows":   rows=(int)n;break;
+                    case "cellsize":    cellsize=n;break;
                     // ignore the rest
                     }
                     continue;
@@ -113,7 +122,7 @@ public class ArcAsciiData {
             if (ptr!=cols*rows)
                 throw new IllegalStateException("Expected to read "+cols*rows+" data but found "+ptr);
 
-            return new ArcAsciiData(cols,rows,data);
+            return new ArcAsciiData(cols,rows,cellsize,data);
         } finally {
             r.close();
         }

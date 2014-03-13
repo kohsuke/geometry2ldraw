@@ -99,8 +99,8 @@ public class App {
         float sy=0.3f, ey=0.7f;
         */
 
-        float one_arc_sec_in_meters = (float)(2.0f * Math.PI * EARTH_RADIUS / (360*60*60));
-        float one_stud_in_meters = one_arc_sec_in_meters*scale;
+        float cellsize_in_meters = (float)(2.0f * Math.PI * EARTH_RADIUS / d.cellsize);
+        float one_stud_in_meters = cellsize_in_meters*scale;
         float ldu_in_meters = one_stud_in_meters/20;
         float plate_in_meters = ldu_in_meters*8;
 
