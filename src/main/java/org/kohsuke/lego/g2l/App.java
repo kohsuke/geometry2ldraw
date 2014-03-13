@@ -62,11 +62,11 @@ public class App {
     @Option(name="-ey")
     float ey = 1f;
 
-    @Option(name="height")
-    int heightRange = 128;
-
-    @Option(name="scale")
-    int scale = 10;
+    /**
+     * 1 lego stud size = ? data cells
+     */
+    @Option(name="-scale")
+    int scale = 6;
 
 
     /**
@@ -99,16 +99,23 @@ public class App {
         float sy=0.3f, ey=0.7f;
         */
 
+        float one_arc_sec_in_meters = (float)(2.0f * Math.PI * EARTH_RADIUS / (360*60*60));
+        float one_stud_in_meters = one_arc_sec_in_meters*scale;
+        float ldu_in_meters = one_stud_in_meters/20;
+        float plate_in_meters = ldu_in_meters*8;
+
         System.out.printf("xx=%d,yy=%d\n", d.xx, d.yy);
         System.out.printf("min=%d,max=%d\n",d.min, d.max);
 
         try (PrintWriter w = new PrintWriter(new FileWriter(input.getPath() +".ldr"))) {
             w.printf("0 %s\n", input);
 
+            boolean first = true;
             for (int y=d.yy(sy); y<d.yy(ey); y+=scale) {
                 for (int x=d.xx(sx); x<d.xx(ex); x+=scale) {
-                    int h = d.scaleOf(d.averageAt(x,y), 0, heightRange);
-                    int c = (x==0 && y==0) ? RED : color;
+                    int h = (int)((d.averageAt(x,y)-d.min) / plate_in_meters);
+                    int c = first ? RED : color;
+                    first = false;
 
                     for (int z=0; z<3; z++) {
                         w.printf("1 %d  %d %d %d   1 0 0   0 1 0   0 0 1  3005.DAT\n",
@@ -132,4 +139,9 @@ public class App {
         }
         return img;
     }
+
+    /**
+     * Radius of Earth in meters.
+     */
+    private static final float EARTH_RADIUS = 6378.1f * 1000;
 }
