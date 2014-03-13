@@ -78,7 +78,7 @@ public class ArcAsciiData {
      */
     public int scaleOf(int v, int mn, int mx) {
         long lv = v;
-        long l = (lv-min)*(mx-mn)/(max-min)+mn;
+        long l = (lv-min)*(mx-mn)/(max-min+1)+mn;
         assert mn<=l && l<mx;
         return (int)l;
     }
@@ -114,7 +114,7 @@ public class ArcAsciiData {
                     }
 
                     for (String t : tokens) {
-                        data[ptr++] = Integer.parseInt(t);
+                        data[ptr++] = (int)Float.parseFloat(t);
                     }
                 }
             }
