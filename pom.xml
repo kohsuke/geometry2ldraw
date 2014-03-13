@@ -23,6 +23,25 @@
           <target>1.7</target>
         </configuration>
       </plugin>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>attached</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <archive>
+                <manifest>
+                  <mainClass>org.kohsuke.lego.g2l.App</mainClass>
+                </manifest>
+              </archive>
+              <descriptorId>jar-with-dependencies</descriptorId>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
