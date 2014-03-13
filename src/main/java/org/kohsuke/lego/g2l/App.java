@@ -68,6 +68,8 @@ public class App {
     @Option(name="-scale")
     int scale = 6;
 
+    @Option(name="-meter-cellsize")
+    boolean meterCellSize;
 
     /**
      * Write data in the LDraw format
@@ -98,7 +100,11 @@ public class App {
         float sy=0.3f, ey=0.7f;
         */
 
-        float cellsize_in_meters = (float)(2.0f * Math.PI * EARTH_RADIUS * d.cellsize/360);
+        float cellsize_in_meters;
+        if (meterCellSize)  // assume cell size is meter
+            cellsize_in_meters = d.cellsize;
+        else // assume cell size is degree
+            cellsize_in_meters = (float)(2.0f * Math.PI * EARTH_RADIUS * d.cellsize/360);
         float one_stud_in_meters = cellsize_in_meters*scale;
         float ldu_in_meters = one_stud_in_meters/20;
         float plate_in_meters = ldu_in_meters*8;

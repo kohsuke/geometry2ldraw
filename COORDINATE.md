@@ -26,3 +26,6 @@ The *.prj file looks like this:
     ]
 
 The format is explained [here](http://www.geoapi.org/3.0/javadoc/org/opengis/referencing/doc-files/WKT.html)
+
+
+ASTER GDM on Matterhorn seems to have a dent in Matterhorn.
