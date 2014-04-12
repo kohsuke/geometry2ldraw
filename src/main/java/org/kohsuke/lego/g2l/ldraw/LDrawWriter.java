@@ -16,9 +16,12 @@ public class LDrawWriter implements Closeable {
         this.w = new PrintWriter(new FileWriter(f));
     }
 
+    /**
+     * Converts coordinate system from familiar one to LDraw
+     */
     public void write(int x, int y, int z, Part part, Color c) {
         w.printf("1 %d  %d %d %d   1 0 0   0 1 0   0 0 1  %s.DAT\n",
-                c.id, x, y, z, part.id);
+                c.id, y, -z, x, part.id);
     }
 
     @Override

@@ -4,6 +4,9 @@ import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.kohsuke.lego.g2l.ldraw.Color;
+import org.kohsuke.lego.g2l.ldraw.LDrawWriter;
+import org.kohsuke.lego.g2l.ldraw.Part;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -18,11 +21,6 @@ import java.util.List;
 import static java.awt.image.BufferedImage.*;
 
 public class App {
-
-    // color code in LDraw data file
-    // see  // see http://www.ldraw.org/article/547
-    private static final int RED = 4;
-    private static final int WHITE = 15;
 
     public static void main(String[] args) throws Exception {
         App app = new App();
@@ -112,18 +110,15 @@ public class App {
         System.out.printf("xx=%d,yy=%d\n", d.xx, d.yy);
         System.out.printf("min=%d,max=%d\n",d.min, d.max);
 
-        try (PrintWriter w = new PrintWriter(new FileWriter(input.getPath() +".ldr"))) {
-            w.printf("0 %s\n", input);
-
+        try (LDrawWriter w = new LDrawWriter(new File(input.getPath() +".ldr"))) {
             boolean first = true;
             for (int y=d.yy(sy); y<d.yy(ey); y+=scale) {
                 for (int x=d.xx(sx); x<d.xx(ex); x+=scale) {
                     int h = (int)((d.averageAt(x,y)-d.min) / plate_in_meters);
-                    int c = first ? RED : WHITE;
+                    Color c = first ? Color.RED : Color.WHITE;
 
                     for (int z=0; z<3; z++) {
-                        w.printf("1 %d  %d %d %d   1 0 0   0 1 0   0 0 1  3005.DAT\n",
-                                c, y*20/scale, -h*8+z*24, x*20/scale);
+                        w.write(x * 20 / scale, y * 20 / scale, h * 8 - z * 24, Part.BRICK1x1, c);
                     }
 
                     first = false;
