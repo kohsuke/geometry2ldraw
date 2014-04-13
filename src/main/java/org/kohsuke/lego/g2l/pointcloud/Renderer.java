@@ -2,6 +2,7 @@ package org.kohsuke.lego.g2l.pointcloud;
 
 import org.kohsuke.lego.g2l.Array2D;
 import org.kohsuke.lego.g2l.ldraw.Color;
+import org.kohsuke.lego.g2l.ldraw.FloatRgb;
 import org.kohsuke.lego.g2l.ldraw.LDrawWriter;
 import org.kohsuke.lego.g2l.ldraw.Part;
 
@@ -85,11 +86,25 @@ public class Renderer {
                     t.merge(z, p.rgb());
             }
 
+            // convert to color map
+            Array2D<FloatRgb> colors = new Array2D<>(FloatRgb.class, height.xx, height.yy);
+            for (int x=0; x<colors.xx; x++) {
+                for (int y=0; y<colors.yy; y++) {
+                    Tag t = height.get(x, y);
+                    if (t!=null) {
+                        colors.set(x,y, new FloatRgb(t.rgb()));
+                    } else {
+                        colors.set(x, y, new FloatRgb(0));
+                    }
+                }
+            } 
+            dither(colors);
+
             for (int x=0; x<height.xx; x++) {
                 for (int y=0; y<height.yy; y++) {
                     Tag t = height.get(x, y);
                     if (t!=null) {
-                        w.write(x*20, y*20, t.z*8, Part.COLUMN1x1, Color.nearest(t.rgb()));
+                        w.write(x*20, y*20, t.z*8, Part.COLUMN1x1, Color.nearest(colors.get(x,y).toInt()));
                     }
                 }
             }
@@ -99,6 +114,32 @@ public class Renderer {
         System.out.println("x="+ixx);
         System.out.println("y="+iyy);
         System.out.println("z="+izz);
+    }
+
+    public static void dither(Array2D<FloatRgb> a) {
+        for (int y=0; y<a.yy; y++) {
+            for (int x=0; x<a.xx; x++) {
+                FloatRgb rgb = a.get(x, y);
+                Color c = Color.nearest(rgb.toInt());
+                FloatRgb target = new FloatRgb(c.rgb);
+                a.set(x,y,target);
+
+                FloatRgb error = rgb.minus(target);
+
+                propagate(a, x+1,y,   error, 7/16f);
+                propagate(a, x-1,y+1, error, 3/16f);
+                propagate(a, x  ,y+1, error, 5/16f);
+                propagate(a, x+1,y+1, error, 1/16f);
+            }
+        }
+    }
+
+    private static void propagate(Array2D<FloatRgb> a, int x, int y, FloatRgb error, float v) {
+        if (x<0 || x>=a.xx || y>=a.yy)        return;
+
+        FloatRgb d = a.get(x, y);
+        d = d.plus(error.times(v));
+        a.set(x, y, d);
     }
 
     /**
