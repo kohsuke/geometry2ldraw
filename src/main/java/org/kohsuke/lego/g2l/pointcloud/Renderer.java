@@ -7,6 +7,8 @@ import org.kohsuke.lego.g2l.ldraw.Part;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Kohsuke Kawaguchi
@@ -15,18 +17,33 @@ public class Renderer {
 
     static class Tag {
         int z;
-        int rgb;
+        List<Integer> rgbs = new ArrayList<>();
 
         Tag(int z, int rgb) {
             this.z = z;
-            this.rgb = rgb;
+            this.rgbs.add(rgb);
         }
 
         public void merge(int z, int rgb) {
             if (z > this.z) {
                 this.z = z;
-//                this.rgb = rgb;
             }
+            this.rgbs.add(rgb);
+        }
+
+        public int rgb() {
+            long r=0,g=0,b=0;
+            for (int rgb : rgbs) {
+                r += (rgb>>16)&0xFF;
+                g += (rgb>>8)&0xFF;
+                b += (rgb   )&0xFF;
+            }
+
+            r /= rgbs.size();
+            g /= rgbs.size();
+            b /= rgbs.size();
+
+            return (int)((r<<16)|(g<<8)|b);
         }
     }
 
@@ -72,7 +89,7 @@ public class Renderer {
                 for (int y=0; y<height.yy; y++) {
                     Tag t = height.get(x, y);
                     if (t!=null) {
-                        w.write(x*20, y*20, t.z*8, Part.COLUMN1x1, Color.nearest(t.rgb));
+                        w.write(x*20, y*20, t.z*8, Part.COLUMN1x1, Color.nearest(t.rgb()));
                     }
                 }
             }
