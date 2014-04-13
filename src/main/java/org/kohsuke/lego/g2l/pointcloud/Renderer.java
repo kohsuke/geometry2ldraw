@@ -51,7 +51,7 @@ public class Renderer {
                 for (int y=0; y<height.yy; y++) {
                     int z = height.get(x,y);
                     if (z>0) {
-                        w.write(x*20, y*20, z*8, Part.BRICK1x1, Color.WHITE);
+                        w.write(x*20, y*20, z*8, Part.COLUMN1x1, Color.WHITE);
                     }
                 }
             }

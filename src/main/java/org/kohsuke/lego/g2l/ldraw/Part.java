@@ -5,7 +5,12 @@ package org.kohsuke.lego.g2l.ldraw;
  */
 public enum Part {
     BRICK1x1("3005"),
-    PLATE1x1("3024")
+    PLATE1x1("3024"),
+
+    /**
+     * 1x1 brick stacked 4 or 5 times high
+     */
+    COLUMN1x1("2453")
     ;
 
     public final String id;
