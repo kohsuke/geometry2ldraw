@@ -1,7 +1,6 @@
 package org.kohsuke.lego.g2l.pointcloud;
 
 import org.kohsuke.lego.g2l.Array2D;
-import org.kohsuke.lego.g2l.Array3D;
 import org.kohsuke.lego.g2l.ldraw.Color;
 import org.kohsuke.lego.g2l.ldraw.LDrawWriter;
 import org.kohsuke.lego.g2l.ldraw.Part;
@@ -13,6 +12,23 @@ import java.io.IOException;
  * @author Kohsuke Kawaguchi
  */
 public class Renderer {
+
+    static class Tag {
+        int z;
+        int rgb;
+
+        Tag(int z, int rgb) {
+            this.z = z;
+            this.rgb = rgb;
+        }
+
+        public void merge(int z, int rgb) {
+            if (z > this.z) {
+                this.z = z;
+//                this.rgb = rgb;
+            }
+        }
+    }
 
     public static void main(String[] args) throws IOException {
         int scale = 4;
@@ -33,7 +49,7 @@ public class Renderer {
         Range iyy = new Range();
         Range izz = new Range();
 
-        Array2D height = new Array2D(100,100);
+        Array2D<Tag> height = new Array2D<Tag>(Tag.class, 100,100);
         try (LDrawWriter w = new LDrawWriter(new File("pointcloud.ldr"))) {
             for (Point p : r) {
                 int x = (p.x - xx.min) / scale / 20;
@@ -44,14 +60,19 @@ public class Renderer {
                 iyy.add(y);
                 izz.add(z);
 
-                height.set(x, y, Math.max(height.get(x, y), z));
+                Tag t = height.get(x,y);
+                if (t==null) {
+                    t = new Tag(z, p.rgb());
+                    height.set(x, y, t);
+                } else
+                    t.merge(z, p.rgb());
             }
 
             for (int x=0; x<height.xx; x++) {
                 for (int y=0; y<height.yy; y++) {
-                    int z = height.get(x,y);
-                    if (z>0) {
-                        w.write(x*20, y*20, z*8, Part.COLUMN1x1, Color.WHITE);
+                    Tag t = height.get(x, y);
+                    if (t!=null) {
+                        w.write(x*20, y*20, t.z*8, Part.COLUMN1x1, Color.nearest(t.rgb));
                     }
                 }
             }

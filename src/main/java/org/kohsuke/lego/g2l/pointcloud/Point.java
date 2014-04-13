@@ -25,4 +25,8 @@ public class Point {
     private static int i(String s) {
         return Integer.parseInt(s);
     }
+
+    public int rgb() {
+        return (r&0xFF)<<16 | (g&0xFF)<<8 | (b&0xFF);
+    }
 }
