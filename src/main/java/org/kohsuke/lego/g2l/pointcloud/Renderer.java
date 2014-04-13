@@ -1,5 +1,6 @@
 package org.kohsuke.lego.g2l.pointcloud;
 
+import org.kohsuke.lego.g2l.Array2D;
 import org.kohsuke.lego.g2l.Array3D;
 import org.kohsuke.lego.g2l.ldraw.Color;
 import org.kohsuke.lego.g2l.ldraw.LDrawWriter;
@@ -32,26 +33,27 @@ public class Renderer {
         Range iyy = new Range();
         Range izz = new Range();
 
-        Array3D data = new Array3D(80,80,100);
+        Array2D height = new Array2D(100,100);
         try (LDrawWriter w = new LDrawWriter(new File("pointcloud.ldr"))) {
             for (Point p : r) {
-                int x = quantitize((p.x - xx.min) / scale, 20);
-                int y = quantitize((p.y - yy.min) / scale, 20);
-                int z = quantitize((p.z - zz.min) / scale, 8);
+                int x = (p.x - xx.min) / scale / 20;
+                int y = (p.y - yy.min) / scale / 20;
+                int z = (p.z - zz.min) / scale / 8;
 
-                // duplicate checker array index
-                int ix = x/20;
-                int iy = y/20;
-                int iz = z/8;
+                ixx.add(x);
+                iyy.add(y);
+                izz.add(z);
 
-                if (data.get(ix,iy,iz)==0) {
-                    data.set(ix,iy,iz, 1);
-                    w.write(x, y, z, Part.PLATE1x1, Color.WHITE);
+                height.set(x, y, Math.max(height.get(x, y), z));
+            }
+
+            for (int x=0; x<height.xx; x++) {
+                for (int y=0; y<height.yy; y++) {
+                    int z = height.get(x,y);
+                    if (z>0) {
+                        w.write(x*20, y*20, z*8, Part.BRICK1x1, Color.WHITE);
+                    }
                 }
-
-                ixx.add(ix);
-                iyy.add(iy);
-                izz.add(iz);
             }
         }
 
