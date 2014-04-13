@@ -115,7 +115,7 @@ public class App {
             for (int y=d.yy(sy); y<d.yy(ey); y+=scale) {
                 for (int x=d.xx(sx); x<d.xx(ex); x+=scale) {
                     int h = (int)((d.averageAt(x,y)-d.min) / plate_in_meters);
-                    Color c = first ? Color.RED : Color.WHITE;
+                    Color c = first ? Color.GREEN : Color.WHITE;
 
                     for (int z=0; z<3; z++) {
                         w.write(x * 20 / scale, y * 20 / scale, h * 8 - z * 24, Part.BRICK1x1, c);

@@ -49,7 +49,7 @@ public class Renderer {
     }
 
     public static void main(String[] args) throws IOException {
-        int scale = 4;
+        int scale = 3;
 
         PointcloudReader r = new PointcloudReader(new File("pointcloud.asc"));
 
@@ -104,7 +104,7 @@ public class Renderer {
                 for (int y=0; y<height.yy; y++) {
                     Tag t = height.get(x, y);
                     if (t!=null) {
-                        w.write(x*20, y*20, t.z*8, Part.COLUMN1x1, Color.nearest(colors.get(x,y).toInt()));
+                        w.write(x*20, -y*20, t.z*8, Part.COLUMN1x1, Color.WHITE); // Color.nearest(colors.get(x,y).toInt()));
                     }
                 }
             }
@@ -136,6 +136,8 @@ public class Renderer {
 
     private static void propagate(Array2D<FloatRgb> a, int x, int y, FloatRgb error, float v) {
         if (x<0 || x>=a.xx || y>=a.yy)        return;
+
+        v -= 1/32f;
 
         FloatRgb d = a.get(x, y);
         d = d.plus(error.times(v));

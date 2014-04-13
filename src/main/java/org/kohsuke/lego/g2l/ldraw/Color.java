@@ -1,7 +1,6 @@
 package org.kohsuke.lego.g2l.ldraw;
 
 import org.apache.sanselan.color.ColorCIELab;
-import org.apache.sanselan.color.ColorConversions;
 
 import static org.apache.sanselan.color.ColorConversions.*;
 
@@ -20,7 +19,10 @@ public enum Color {
     LIGHT_GRAY  ( 7,"9BA19D"),
     DARK_GRAY   ( 8,"6D6E5C"),
     LIGHT_BLUE  ( 9,"B4D2E3"),
-    WHITE       (15,"FFFFFF")
+    WHITE       (15,"FFFFFF"),
+    TAN         (19,"E4CD9E"),
+    ORANGE      (25,"FE8A18"),
+    LIGHT_GREEN (27,"BBE90B")
     ;
 
     public final int id;
@@ -49,8 +51,21 @@ public enum Color {
         return nearest;
     }
 
+    public int r() {
+        return rgb>>16;
+    }
+
+    public int g() {
+        return (rgb>>8)&0xFF;
+    }
+
+    public int b() {
+        return rgb&0xFF;
+    }
+
     public double distance(Color that) {
-        return distance(this.cie,that.cie);
+        return sq(this.r()-that.r()) + sq(this.g()-that.g()) + sq(this.b()-that.b());
+//        return distance(this.cie,that.cie);
     }
 
     static double distance(ColorCIELab lhs, ColorCIELab rhs) {
