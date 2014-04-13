@@ -9,25 +9,6 @@ import java.io.File;
  */
 public class Boundaries {
 
-    static class Range {
-        int max = Integer.MIN_VALUE;
-        int min = Integer.MAX_VALUE;
-
-        void add(int i) {
-            if (i>max)  max=i;
-            if (i<min)  min=i;
-        }
-
-        void add(String s) {
-            add(Integer.parseInt(s));
-        }
-
-        @Override
-        public String toString() {
-            return String.format("[%d,%d] (range=%d)",min,max, max-min);
-        }
-    }
-
     public static void main(String[] args) throws Exception {
         Range x = new Range();
         Range y = new Range();
