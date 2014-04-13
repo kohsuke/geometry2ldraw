@@ -1,15 +1,15 @@
-package org.kohsuke.lego.g2l.pointcloud;
+package org.kohsuke.lego.g2l;
 
 /**
  * 3D array.
  *
  * @author Kohsuke Kawaguchi
  */
-class ThreeDimensionArray {
+public class Array3D {
     final int xx,yy,zz;
     final int data[];
 
-    ThreeDimensionArray(int x, int y, int z) {
+    public Array3D(int x, int y, int z) {
         this.xx = x;
         this.yy = y;
         this.zz = z;

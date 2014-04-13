@@ -1,5 +1,6 @@
 package org.kohsuke.lego.g2l.pointcloud;
 
+import org.kohsuke.lego.g2l.Array3D;
 import org.kohsuke.lego.g2l.ldraw.Color;
 import org.kohsuke.lego.g2l.ldraw.LDrawWriter;
 import org.kohsuke.lego.g2l.ldraw.Part;
@@ -31,7 +32,7 @@ public class Renderer {
         Range iyy = new Range();
         Range izz = new Range();
 
-        ThreeDimensionArray data = new ThreeDimensionArray(80,80,100);
+        Array3D data = new Array3D(80,80,100);
         try (LDrawWriter w = new LDrawWriter(new File("pointcloud.ldr"))) {
             for (Point p : r) {
                 int x = quantitize((p.x - xx.min) / scale, 20);
