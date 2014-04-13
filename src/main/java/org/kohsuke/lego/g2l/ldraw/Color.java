@@ -1,5 +1,10 @@
 package org.kohsuke.lego.g2l.ldraw;
 
+import org.apache.sanselan.color.ColorCIELab;
+import org.apache.sanselan.color.ColorConversions;
+
+import static org.apache.sanselan.color.ColorConversions.*;
+
 /**
  * Color code in LDraw data file
  *
@@ -19,10 +24,42 @@ public enum Color {
     ;
 
     public final int id;
-    public final int c;
+    public final int rgb;
+    public final ColorCIELab cie;
 
     Color(int id, String code) {
         this.id = id;
-        this.c = Integer.parseInt(code, 16);
+        this.rgb = Integer.parseInt(code, 16);
+        this.cie = convertXYZtoCIELab(convertRGBtoXYZ(rgb));
+    }
+
+    public static Color nearest(int rgb) {
+        ColorCIELab cie = convertXYZtoCIELab(convertRGBtoXYZ(rgb));
+
+        double best=Double.MAX_VALUE;
+        Color nearest=null;
+
+        for (Color e : Color.values()) {
+            double d = distance(e.cie, cie);
+            if (d<best) {
+                best = d;
+                nearest = e;
+            }
+        }
+        return nearest;
+    }
+
+    public double distance(Color that) {
+        return distance(this.cie,that.cie);
+    }
+
+    static double distance(ColorCIELab lhs, ColorCIELab rhs) {
+        return sq(lhs.L - rhs.L)
+             + sq(lhs.a - rhs.a)
+             + sq(lhs.b - rhs.b);
+    }
+
+    static double sq(double d) {
+        return d * d;
     }
 }

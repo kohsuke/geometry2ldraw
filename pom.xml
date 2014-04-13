@@ -57,5 +57,10 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.sanselan</groupId>
+      <artifactId>sanselan</artifactId>
+      <version>0.97-incubator</version>
+    </dependency>
   </dependencies>
 </project>
