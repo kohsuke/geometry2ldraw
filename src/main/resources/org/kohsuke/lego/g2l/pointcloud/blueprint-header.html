@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+    <link type='text/css' rel='stylesheet' href='blueprint.css'>
+  <title>Matterhorn Blueprint</title>
+
+  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+
+  <script>
+  $(function() {
+    function update(base) {
+      $("#height").html(base/3);
+      $("td").html(function () {
+        var h = parseInt(this.getAttribute("v"))-base;
+        if (h<0)    return "";
+        if (h<=6)   return "<b>"+h+"</b>";
+        if (h<=9)   return h;
+        return "-";
+      });
+    }
+  
+    var s = $("#slider").slider({
+        min: 0,
+        max: 129,
+        value: 0,
+        step: 3,
+        slide: function(ev,slider) {
+          update(slider.value);
+        }
+    });
+    update(0);
+  });
+  </script>
+</head>
+<body>
+Height slice h=<span id="height"></span>:
+<div id="slider"></div>

@@ -1,5 +1,6 @@
 package org.kohsuke.lego.g2l.pointcloud;
 
+import org.apache.commons.io.IOUtils;
 import org.kohsuke.lego.g2l.Array2D;
 import org.kohsuke.lego.g2l.ldraw.Color;
 import org.kohsuke.lego.g2l.ldraw.FloatRgb;
@@ -176,17 +177,18 @@ public class Renderer {
      * @param sp
      *      top-left corner in the height map to start producing blue print.
      */
-    private static void blueprint48x48(Array2D<Tag> height, Coordinate sp, String name) throws FileNotFoundException {
+    private static void blueprint48x48(Array2D<Tag> height, Coordinate sp, String name) throws IOException {
         try (PrintWriter w = new PrintWriter(new File(name+".html"))) {
-            w.println("<html><head><link type='text/css' rel='stylesheet' href='blueprint.css'></head><body><table>");
+            w.println(IOUtils.toString(Renderer.class.getResourceAsStream("blueprint-header.html")));
+            w.println("<table>");
             for (int x : new Range(sp.x, sp.x+48)) {
                 w.println("<tr>");
                 for (int y : new Range(sp.y, sp.y+48)) {
                     Tag t = height.get(x,y);
                     if (t!=null)
-                        w.printf("<td>%d</td>", t.z);
+                        w.printf("<td v='%d'></td>", t.z);
                     else
-                        w.printf("<td></td>");
+                        w.printf("<td v='0'></td>");
                 }
                 w.println("</tr>");
             }
