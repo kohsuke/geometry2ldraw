@@ -11,6 +11,10 @@ public class Coordinate {
         this.y = y;
     }
 
+    public Coordinate add(int dx, int dy) {
+        return new Coordinate(x+dx,y+dy);
+    }
+
     @Override
     public String toString() {
         return String.format("(%d,%d)", x, y);

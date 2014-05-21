@@ -7,7 +7,9 @@ import org.kohsuke.lego.g2l.ldraw.LDrawWriter;
 import org.kohsuke.lego.g2l.ldraw.Part;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -112,20 +114,52 @@ public class Renderer {
             } 
             dither(colors);
 
-            for (int x=peak.x-48; x<peak.x+48; x++) {
-                for (int y=peak.y-48; y<peak.y+48; y++) {
 
+            // range around the peak to be modeled
+            Range modelRX = new Range(peak.x-48, peak.x+48);
+            Range modelRY = new Range(peak.y-48, peak.y+48);
+
+            // figure out the min(z) in the model range
+            int minz = Integer.MAX_VALUE;
+            for (int x : modelRX) {
+                for (int y : modelRY) {
+                    Tag t = height.get(x, y);
+                    if (t!=null) {
+                        minz= Math.min(minz,t.z);
+                    }
+                }
+            }
+            System.out.println("minz="+minz);
+
+            // have the smallest height be height=1
+            for (int x : modelRX) {
+                for (int y : modelRY) {
+                    Tag t = height.get(x, y);
+                    if (t!=null) {
+                        t.z -= minz-1;
+                    }
+                }
+            }
+
+            // build the model
+            for (int x : modelRX) {
+                for (int y : modelRY) {
 // used this with scale=3 to capture a bigger area (but with less details around the peak)
 //            for (int x=0; x<height.xx; x++) {
 //                for (int y=0; y<height.yy; y++) {
                     Tag t = height.get(x, y);
                     if (t!=null) {
                         w.write(x*20, -y*20, t.z*8, Part.COLUMN1x1, Color.WHITE); // Color.nearest(colors.get(x,y).toInt()));
+                        minz= Math.min(minz,t.z);
                     }
                 }
             }
         }
 
+        blueprint48x48(height, peak.add(-48, -48), "area1");
+        blueprint48x48(height, peak.add(-48,   0), "area2");
+        blueprint48x48(height, peak.add(  0, -48), "area3");
+        blueprint48x48(height, peak.add(  0,   0), "area4");
 
 
 
@@ -134,6 +168,30 @@ public class Renderer {
         System.out.println("y="+iyy);
         System.out.println("z="+izz);
         System.out.println("peak="+peak);
+    }
+
+    /**
+     * Produces 48x48 blueprint of a particular section.
+     *
+     * @param sp
+     *      top-left corner in the height map to start producing blue print.
+     */
+    private static void blueprint48x48(Array2D<Tag> height, Coordinate sp, String name) throws FileNotFoundException {
+        try (PrintWriter w = new PrintWriter(new File(name+".html"))) {
+            w.println("<html><head><link type='text/css' rel='stylesheet' href='blueprint.css'></head><body><table>");
+            for (int x : new Range(sp.x, sp.x+48)) {
+                w.println("<tr>");
+                for (int y : new Range(sp.y, sp.y+48)) {
+                    Tag t = height.get(x,y);
+                    if (t!=null)
+                        w.printf("<td>%d</td>", t.z);
+                    else
+                        w.printf("<td></td>");
+                }
+                w.println("</tr>");
+            }
+            w.println("</table></body></html>");
+        }
     }
 
     public static void dither(Array2D<FloatRgb> a) {
