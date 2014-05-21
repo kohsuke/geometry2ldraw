@@ -49,7 +49,8 @@ public class Renderer {
     }
 
     public static void main(String[] args) throws IOException {
-        int scale = 3;
+        // scale factor. smaller the number, bigger the model.
+        float scale = 2f;
 
         PointcloudReader r = new PointcloudReader(new File("pointcloud.asc"));
 
@@ -67,12 +68,12 @@ public class Renderer {
         Range iyy = new Range();
         Range izz = new Range();
 
-        Array2D<Tag> height = new Array2D<Tag>(Tag.class, 100,100);
+        Array2D<Tag> height = new Array2D<Tag>(Tag.class, 150,150);
         try (LDrawWriter w = new LDrawWriter(new File("pointcloud.ldr"))) {
             for (Point p : r) {
-                int x = (p.x - xx.min) / scale / 20;
-                int y = (p.y - yy.min) / scale / 20;
-                int z = (p.z - zz.min) / scale / 8;
+                int x = (int)((p.x - xx.min) / scale / 20);
+                int y = (int)((p.y - yy.min) / scale / 20);
+                int z = (int)((p.z - zz.min) / scale / 8);
 
                 ixx.add(x);
                 iyy.add(y);
@@ -100,8 +101,12 @@ public class Renderer {
             } 
             dither(colors);
 
-            for (int x=0; x<height.xx; x++) {
-                for (int y=0; y<height.yy; y++) {
+            for (int x=ixx.mid()-48; x<ixx.mid()+48; x++) {
+                for (int y=iyy.mid()-48; y<iyy.mid()+48; y++) {
+
+// used this with scale=3 to capture a bigger area (but with less details around the peak)
+//            for (int x=0; x<height.xx; x++) {
+//                for (int y=0; y<height.yy; y++) {
                     Tag t = height.get(x, y);
                     if (t!=null) {
                         w.write(x*20, -y*20, t.z*8, Part.COLUMN1x1, Color.WHITE); // Color.nearest(colors.get(x,y).toInt()));

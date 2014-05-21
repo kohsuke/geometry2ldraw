@@ -16,6 +16,13 @@ class Range {
         add(Integer.parseInt(s));
     }
 
+    /**
+     * Middle.
+     */
+    int mid() {
+        return max/2;
+    }
+
     @Override
     public String toString() {
         return String.format("[%d,%d] (range=%d)",min,max, max-min);
