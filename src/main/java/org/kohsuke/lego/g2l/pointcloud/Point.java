@@ -1,6 +1,8 @@
 package org.kohsuke.lego.g2l.pointcloud;
 
 /**
+ * Point data in the point cloud.
+ *
  * @author Kohsuke Kawaguchi
  */
 public class Point {

@@ -25,6 +25,9 @@ public class Renderer {
             this.rgbs.add(rgb);
         }
 
+        /**
+         * Adds another color data point.
+         */
         public void merge(int z, int rgb) {
             if (z > this.z) {
                 this.z = z;
@@ -68,6 +71,9 @@ public class Renderer {
         Range iyy = new Range();
         Range izz = new Range();
 
+        Coordinate peak = null;
+        int peakHeight = -1;
+
         Array2D<Tag> height = new Array2D<Tag>(Tag.class, 150,150);
         try (LDrawWriter w = new LDrawWriter(new File("pointcloud.ldr"))) {
             for (Point p : r) {
@@ -85,6 +91,11 @@ public class Renderer {
                     height.set(x, y, t);
                 } else
                     t.merge(z, p.rgb());
+
+                if (z > peakHeight) {
+                    peakHeight = z;
+                    peak = new Coordinate(x,y);
+                }
             }
 
             // convert to color map
@@ -101,8 +112,8 @@ public class Renderer {
             } 
             dither(colors);
 
-            for (int x=ixx.mid()-48; x<ixx.mid()+48; x++) {
-                for (int y=iyy.mid()-48; y<iyy.mid()+48; y++) {
+            for (int x=peak.x-48; x<peak.x+48; x++) {
+                for (int y=peak.y-48; y<peak.y+48; y++) {
 
 // used this with scale=3 to capture a bigger area (but with less details around the peak)
 //            for (int x=0; x<height.xx; x++) {
@@ -115,10 +126,14 @@ public class Renderer {
             }
         }
 
+
+
+
         System.out.println("Dimension");
         System.out.println("x="+ixx);
         System.out.println("y="+iyy);
         System.out.println("z="+izz);
+        System.out.println("peak="+peak);
     }
 
     public static void dither(Array2D<FloatRgb> a) {
