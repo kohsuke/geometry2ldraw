@@ -16,8 +16,8 @@
       $("td").html(function () {
         var h = parseInt(this.getAttribute("v"))-base;
         if (h<0)    return "";
-        if (h<=6)   return "<b>"+h+"</b>";
-        if (h<=9)   return h;
+        if (h<3)   return "<b>"+h+"</b>";
+        if (h<6)   return h;
         return "-";
       });
     }
